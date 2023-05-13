@@ -6,9 +6,6 @@
 #include "firestore.h"
 #include <SoftwareSerial.h>
 
-#define RXD2 16
-#define TXD2 17
-
 class Scale{
     public:
         String currWeightString;
@@ -31,8 +28,7 @@ void Scale::ReadScaleWeight()
     currWeightString = "";
     while (Serial2.available())
     {
-        c = Serial2.read();
-        currWeightString += c;
+        currWeightString += Serial2.read();
     }
 }
 
@@ -42,7 +38,7 @@ void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
         return; //current val is 0
     }
 
-    float curr_val = getNum(this->currWeightString);
+    float curr_val = GetNum(this->currWeightString);
     this->oldVal = this->oldVal * 0.50 + curr_val * 0.50;
 
     bool should_start_new_task = CheckingIfShouldStartNewTask(curr_val);
@@ -58,7 +54,7 @@ void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
         this->PlayTaskEnded(audio,firestore,worker,curr_val);
     }
     else{
-        audio.sayNum((curr_val + unit / 2) / unit, worker.language, false);
+        audio.SayNum((curr_val + unit / 2) / unit, worker.language, false);
         this->oldVal = -10;
         delay(1000);
     }
@@ -80,8 +76,8 @@ void Scale::PlayTaskEnded(Audio& audio,FireStore& firestore, Worker& worker,floa
     audio.play_indx_song[4] = 6;
     if (worker.language == "Hebrew") audio.play_indx_song[4] = 16;
     if (worker.language == "Russian") audio.play_indx_song[4] = 26;
-    audio.send_command_to_MP3_player(audio.play_indx_song, 6);
-    firestore.uploadData(curr_val,worker);
+    audio.SendCommandToMP3Player(audio.play_indx_song, 6);
+    firestore.UploadData(curr_val,worker);
     this->oldVal = -10;
     this->isNextJobReady = false;
 }

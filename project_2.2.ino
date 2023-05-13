@@ -11,6 +11,8 @@
 #define API_KEY "AIzaSyAiE9hg0wrGLOPtctSv81nD_3mZnHOFWqI"
 #define USER_EMAIL "admin@admin.com"
 #define USER_PASSWORD "12345678"
+#define RXD2 16
+#define TXD2 17
 
 SoftwareSerial RFID(21, 19);  // RX and TX
 
@@ -20,13 +22,12 @@ Worker worker("","","","");
 Scale scale;
 
 bool first_time_played;
+bool start;
 String text;
 const char* ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 7200;
 const int daylightOffset_sec = 3600;
 static int8_t select_SD_card[] = { 0x7e, 0x03, 0X35, 0x01, (int8_t)0xef };  // 7E 03 35 01 EF
-
-void LogOut();
 
 void setup() {
 
@@ -47,7 +48,7 @@ void setup() {
 
     ///////////////////// sound setup //////////////////////////
     Serial1.begin(9600);
-    audio.send_command_to_MP3_player(select_SD_card, 5);
+    audio.SendCommandToMP3Player(select_SD_card, 5);
 
     ///////////////////// wifi setup //////////////////////////
     ConnectToWifi();
@@ -83,7 +84,7 @@ void loop()
         while (RFID.available() > 0)
         {
             delay(5);
-            c = RFID.read();
+            char c = RFID.read(); //should check
         }
     }
 
@@ -93,8 +94,7 @@ void loop()
     }
     while (RFID.available() > 0 && !start){ //PlayConnectingToWorkerData(2.5);
         delay(5);
-        c = RFID.read();
-        text += c;
+        text += RFID.read();
     }
     start = true;
     if (text.length() > 0){
@@ -126,12 +126,12 @@ void loop()
         }
 
         if (unit < 0){
-            audio.PlayCantCollectDataFromDB(first_time_played);
+            audio.PlayCantCollectDataFromDB(first_time_played,start);
             return;
         }
 
-        audio.sayIntro(worker.language);
-        getTime(start_time);
+        audio.SayIntro(worker.language);
+        GetTime(start_time);
     }
 
     ///////////////////// scale read //////////////////////////
