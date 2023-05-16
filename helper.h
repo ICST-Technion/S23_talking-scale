@@ -28,11 +28,11 @@ void ConnectToWifi();
 //#define WIFI_SSID "Karam"
 //#define WIFI_PASSWORD "karam1234"
 
-//#define WIFI_SSID "AndroidAP"
-//#define WIFI_PASSWORD "sami0303"
+#define WIFI_SSID "AndroidAP"
+#define WIFI_PASSWORD "sami0303"
 
-#define WIFI_SSID "Kamil"
-#define WIFI_PASSWORD "kamil196"
+//#define WIFI_SSID "Kamil"
+//#define WIFI_PASSWORD "kamil196"
 
 /******************************************************************/
 float GetNum(String string) {
@@ -128,6 +128,7 @@ void ConnectToWifi()
     Serial.println(WIFI_SSID);
     while (WiFi.status() != WL_CONNECTED)
     {
+        Serial.write("connecting to WIFI ...\n");
         digitalWrite(redPin, HIGH);
         digitalWrite(greenPin, HIGH);
         delay(300);
@@ -135,7 +136,6 @@ void ConnectToWifi()
         digitalWrite(greenPin, LOW);
         delay(300);
     }
-    Serial.print("You're connected to the network");
 }
 
 #endif //HELPER_H

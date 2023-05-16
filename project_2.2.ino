@@ -28,9 +28,10 @@ const char* ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 7200;
 const int daylightOffset_sec = 3600;
 static int8_t select_SD_card[] = { 0x7e, 0x03, 0X35, 0x01, (int8_t)0xef };  // 7E 03 35 01 EF
+char reading_char;
 
 void setup() {
-
+    
     //PlayReadingTag(1)
     ///////////// RFID setup //////////////////////////
     Serial.begin(9600);
@@ -52,7 +53,7 @@ void setup() {
 
     ///////////////////// wifi setup //////////////////////////
     ConnectToWifi();
-
+        
     //PlayConnectingToWorkerData(2);
     /* Assign the api key (required) */
     firestore.config.api_key = API_KEY;
@@ -80,6 +81,7 @@ void loop()
 {
     if (digitalRead(23) == LOW)
     {
+        Serial.write("logging out\n");
         LogOut();
         while (RFID.available() > 0)
         {
@@ -90,14 +92,19 @@ void loop()
 
     ///////////////////// RFID read //////////////////////////
     while (!RFID.available() && !start){
+        Serial.write("RFID is not available\n");
         delay(5);
     }
     while (RFID.available() > 0 && !start){ //PlayConnectingToWorkerData(2.5);
+        Serial.write("reading RFID ... \n");
         delay(5);
-        text += RFID.read();
+        reading_char = RFID.read();
+        text += reading_char;
     }
+
     start = true;
     if (text.length() > 0){
+        Serial.write("text length > 0 \n");
         worker.id = "";
         for (int x = 1; (text[x] >= 'A' && text[x] <= 'Z') || (text[x] >= '0' && text[x] <= '9'); x++)
           worker.id += text[x];
@@ -112,24 +119,29 @@ void loop()
         ////////////////////////read from firestore/////////////////////////////////
         bool can_access_fire_store = firestore.CheckAccessFireStore(FIREBASE_PROJECT_ID,documentPath.c_str());
         if (!can_access_fire_store){
+            Serial.write("can't access the fire store with email and password \n");
             audio.PlayEmailAndPasswordAreNotAuthenticated();
             return;
         }
 
         documentPath = StringSumHelper("Workers/") + worker.id;
+
         can_access_fire_store = firestore.CheckAccessFireStore(FIREBASE_PROJECT_ID,documentPath.c_str());
         if (can_access_fire_store){
             firestore.UpdateWorkerInfo(worker);
         }
         else{
+            Serial.write("can't access the fire store with worker ID \n");
             Serial.println(firestore.fbdo.errorReason());
         }
 
         if (unit < 0){
+            Serial.write("unit < 0 \n");
             audio.PlayCantCollectDataFromDB(first_time_played,start);
             return;
         }
-
+        Serial.write("all good, starting the project ... \n");
+        //audio.PlayCombine();
         audio.SayIntro(worker.language);
         GetTime(start_time);
     }
@@ -150,8 +162,6 @@ void LogOut(){
 
     digitalWrite(redPin, LOW);
 
-    //int temp3 = play_indx_song[3];
-    //int temp4 = play_indx_song[4];
     audio.PlayGoodBye(worker);
 }
 

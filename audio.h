@@ -15,7 +15,7 @@ class Audio{
         void SayArabic(int num);
         void SayHebrew(int num);
         void SayRussian(int num);
-        void SayWord(int x, String language);
+        //void SayWord(int x, String language);
         void SayIntro(String language);
         void SendCommandToMP3Player(int8_t command[], int len);
         void SayNum(int num, String language, bool justNum);
@@ -24,7 +24,8 @@ class Audio{
         void PlayShouldStartNewTask(float curr_val, bool& isNextJobReady, Worker& worker);
         void PlayGoodBye(Worker& worker);
         int ReadResponseFromMP3Player(int8_t response[], int max_len);
-        void WaitUntilAudioEnded();
+        //void WaitUntilAudioEnded();
+        //void PlayCombine();
 
 };
 
@@ -168,20 +169,20 @@ void Audio::SayRussian(int num)
 }
 
 /******************************************************************/
-void Audio::SayWord(int x, String language)
-{
-    if (language == "Arabic") x += 10;
-    if (language == "Hebrew") x += 20;
-    if (language == "Russian") x += 30;
-    int temp3 = play_indx_song[3];
-    int temp4 = play_indx_song[4];
-    play_indx_song[3] = 4;
-    play_indx_song[4] = x;
-    SendCommandToMP3Player(play_indx_song, 6);
-    play_indx_song[3] = temp3;
-    play_indx_song[4] = temp4;
-    delay(200);
-}
+// void Audio::SayWord(int x, String language)
+// {
+//     if (language == "Arabic") x += 10;
+//     if (language == "Hebrew") x += 20;
+//     if (language == "Russian") x += 30;
+//     int temp3 = play_indx_song[3];
+//     int temp4 = play_indx_song[4];
+//     play_indx_song[3] = 4;
+//     play_indx_song[4] = x;
+//     SendCommandToMP3Player(play_indx_song, 6);
+//     play_indx_song[3] = temp3;
+//     play_indx_song[4] = temp4;
+//     delay(200);
+// }
 
 /******************************************************************/
 void Audio::SayIntro(String language)
@@ -223,7 +224,6 @@ void Audio::SendCommandToMP3Player(int8_t command[], int len)
         Serial1.write(command[i]);
         Serial.print(command[i], HEX);
     }
-    this->WaitUntilAudioEnded();
     delay(1000);
 }
 
@@ -304,26 +304,31 @@ int Audio::ReadResponseFromMP3Player(int8_t response[], int max_len)
 }
 
 /******************************************************************/
-void Audio::WaitUntilAudioEnded()
-{
-    while (true) {
-        // Send command to query MP3 player status
-        int8_t query_status[] = { 0x7e, 0x02, 0x42, 0x00, (int8_t)0xef };
-        this->SendCommandToMP3Player(query_status, 5);
+// void Audio::WaitUntilAudioEnded()
+// {
+//     while (true) {
+//         // Send command to query MP3 player status
+//         int8_t query_status[] = { 0x7e, 0x02, 0x42, 0x00, (int8_t)0xef };
+//         this->SendCommandToMP3Player(query_status, 5);
 
-        // Read response from MP3 player
-        int8_t response[10];
-        int response_len = this->ReadResponseFromMP3Player(response, 10);
+//         // Read response from MP3 player
+//         int8_t response[10];
+//         int response_len = this->ReadResponseFromMP3Player(response, 10);
 
-        // Check if playback has finished
-        if (response_len >= 10 && response[3] == 0x08 && response[6] == 0x00) {
-            // Playback has finished
-            break;
-        }
+//         // Check if playback has finished
+//         if (response_len >= 10 && response[3] == 0x08 && response[6] == 0x00) {
+//             // Playback has finished
+//             break;
+//         }
 
-        // Wait for a short time before checking again
-        delay(100);
-    }
-}
-
+//         // Wait for a short time before checking again
+//         delay(100);
+//     }
+// }
+// void Audio::PlayCombine(){
+    
+//     int8_t play_combine[] = {0x7E, 16, 0x45, 10, 11, 10, 12, 10, 13, 02, 30, 10, 14, 02, 30, 10, 15, (int8_t)0xEF};
+//     //int8_t play_combine[] = {0x7E, 0x08, 0x45, 0x02, 10, 0x02, 11, 0x02, 12, (int8_t)0xEF};
+//     this->SendCommandToMP3Player(play_combine, 18);
+// }
 #endif //AUDIO_H

@@ -6,6 +6,8 @@
 #include "firestore.h"
 #include <SoftwareSerial.h>
 
+char char_to_read;
+
 class Scale{
     public:
         String currWeightString;
@@ -24,12 +26,19 @@ class Scale{
 
 void Scale::ReadScaleWeight()
 {
-    oldWeightString = currWeightString;
-    currWeightString = "";
+    Serial.print("reading the scale...");
+    Serial.println();
+
+    this->oldWeightString = currWeightString;
+    this->currWeightString = "";
     while (Serial2.available())
     {
-        currWeightString += Serial2.read();
+        char_to_read = Serial2.read();
+        this->currWeightString += char_to_read;
     }
+    Serial.print("reading the scale ended");
+    Serial.println();
+
 }
 
 void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
@@ -45,8 +54,8 @@ void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
     if (should_start_new_task){
         audio.PlayShouldStartNewTask(curr_val,isNextJobReady,worker);
     }
-
-    Serial.println("current weight: ");
+    
+    Serial.println("\ncurrent weight: ");
     Serial.println(curr_val);
 
     bool is_task_ended = CheckIfTaskEnded(curr_val);
@@ -58,7 +67,7 @@ void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
         this->oldVal = -10;
         delay(1000);
     }
-    currWeightString = "";
+    this->currWeightString = "";
 }
 
 bool Scale::CheckIfTaskEnded(float& curr_val)
