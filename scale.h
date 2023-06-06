@@ -63,7 +63,7 @@ void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
         this->PlayTaskEnded(audio,firestore,worker,curr_val);
     }
     else{
-        audio.SayNum((curr_val + unit / 2) / unit, worker.language, false);
+        audio.SayNum(int((curr_val + unit / 2) / unit), worker.language, false);
         this->oldVal = -10;
         delay(1000);
     }

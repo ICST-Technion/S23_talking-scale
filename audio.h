@@ -24,8 +24,12 @@ class Audio{
         void PlayShouldStartNewTask(float curr_val, bool& isNextJobReady, Worker& worker);
         void PlayGoodBye(Worker& worker);
         int ReadResponseFromMP3Player(int8_t response[], int max_len);
+        void PlayConnectingToWiFi(String language);
+        void PlayPutYourChip(String language);
+        void PlayConnectingToWorkerData(String language);
+        
         //void WaitUntilAudioEnded();
-        //void PlayCombine();
+        void PlayCombine();
 
 };
 
@@ -104,6 +108,22 @@ void Audio::SayArabic(int num)
 /*****************************************************************/
 void Audio::SayHebrew(int num)
 {
+    if (num / 100 > 0){
+      play_indx_song[4] = (num) - (num%100);
+      SendCommandToMP3Player(play_indx_song, 6);
+      if(play_indx_song[4] == 100 || play_indx_song[4] == 200){
+        delay(700);
+      }
+      else{
+        delay(1200);
+      }
+      num = num % 100;
+    }
+    play_indx_song[4] = num;
+    SendCommandToMP3Player(play_indx_song, 6);
+    delay(500); 
+    return;
+
     if (num < 10 && num > 0) {
       play_indx_song[4] = num + 20;
       SendCommandToMP3Player(play_indx_song, 6);
@@ -169,50 +189,28 @@ void Audio::SayRussian(int num)
 }
 
 /******************************************************************/
-// void Audio::SayWord(int x, String language)
-// {
-//     if (language == "Arabic") x += 10;
-//     if (language == "Hebrew") x += 20;
-//     if (language == "Russian") x += 30;
-//     int temp3 = play_indx_song[3];
-//     int temp4 = play_indx_song[4];
-//     play_indx_song[3] = 4;
-//     play_indx_song[4] = x;
-//     SendCommandToMP3Player(play_indx_song, 6);
-//     play_indx_song[3] = temp3;
-//     play_indx_song[4] = temp4;
-//     delay(200);
-// }
-
-/******************************************************************/
 void Audio::SayIntro(String language)
 {
-    int sound = 1;
-    if (language == "Hebrew") sound = 11;
-    if (language == "Russian") sound = 21;
-    play_indx_song[3] = 10;
-    play_indx_song[4] = sound++;
+    play_indx_song[3] = 30;
+    play_indx_song[4] = 19;
     SendCommandToMP3Player(play_indx_song, 6);
-    delay(2200);
-    play_indx_song[4] = sound++;
-    SendCommandToMP3Player(play_indx_song, 6);
-    delay(300);
-    play_indx_song[4] = sound++;
-    SendCommandToMP3Player(play_indx_song, 6);
-    delay(2700);
+    delay(4000);
 
-    SayNum(goal, language, true);
-    delay(200);
-    play_indx_song[3] = 10;
-    play_indx_song[4] = sound++;
+    SayNum(int(goal), language, true);
+    delay(1000);
+    
+    play_indx_song[3] = 30;
+    play_indx_song[4] = 14;
     SendCommandToMP3Player(play_indx_song, 6);
-    delay(200);
-    SayNum(goal / unit, language, true);
-    delay(200);
-    play_indx_song[3] = 10;
-    play_indx_song[4] = sound++;
+    delay(950);
+
+    SayNum(int(goal / unit), language, true);
+    delay(900);
+
+    play_indx_song[3] = 30;
+    play_indx_song[4] = 15;
     SendCommandToMP3Player(play_indx_song, 6);
-    delay(200);
+    delay(950);
 }
 
 /******************************************************************/
@@ -224,7 +222,7 @@ void Audio::SendCommandToMP3Player(int8_t command[], int len)
         Serial1.write(command[i]);
         Serial.print(command[i], HEX);
     }
-    delay(1000);
+    //delay(1000);
 }
 
 /******************************************************************/
@@ -236,7 +234,7 @@ void Audio::SayNum(int num, String language, bool justNum) {
   }
   if (language == "Hebrew")
   {
-      play_indx_song[3] = 2;
+      play_indx_song[3] = 40;
       SayHebrew(num);
   }
   if (language == "Russian")
@@ -304,6 +302,84 @@ int Audio::ReadResponseFromMP3Player(int8_t response[], int max_len)
 }
 
 /******************************************************************/
+void Audio::PlayConnectingToWiFi(String language)
+{
+  if (language == "Arabic")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 01;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(1200);
+  }
+  if (language == "Hebrew")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 11;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(1200);
+  }
+  if (language == "Russian")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 21;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(2200);
+  }
+}
+
+/******************************************************************/
+void Audio::PlayPutYourChip(String language)
+{
+  if (language == "Arabic")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 02;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(2200);
+  }
+  if (language == "Hebrew")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 12;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(1200);
+  }
+  if (language == "Russian")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 22;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(2200);
+  }
+}
+
+/******************************************************************/
+void Audio::PlayConnectingToWorkerData(String language)
+{
+  if (language == "Arabic")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 03;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(2200);
+  }
+  if (language == "Hebrew")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 13;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(1200);
+  }
+  if (language == "Russian")
+  {
+    play_indx_song[3] = 20;
+    play_indx_song[4] = 23;
+    this->SendCommandToMP3Player(play_indx_song, 6);
+    delay(3200);
+  }
+}
+
+/******************************************************************/
 // void Audio::WaitUntilAudioEnded()
 // {
 //     while (true) {
@@ -325,10 +401,10 @@ int Audio::ReadResponseFromMP3Player(int8_t response[], int max_len)
 //         delay(100);
 //     }
 // }
-// void Audio::PlayCombine(){
+void Audio::PlayCombine(){
     
-//     int8_t play_combine[] = {0x7E, 16, 0x45, 10, 11, 10, 12, 10, 13, 02, 30, 10, 14, 02, 30, 10, 15, (int8_t)0xEF};
-//     //int8_t play_combine[] = {0x7E, 0x08, 0x45, 0x02, 10, 0x02, 11, 0x02, 12, (int8_t)0xEF};
-//     this->SendCommandToMP3Player(play_combine, 18);
-// }
+    int8_t play_combine[] = {0x7E, 16, 0x45, 30, 11, 30, 12, 30, 13, 02, 30, 30, 14, 02, 30, 30, 15, (int8_t)0xEF};
+    //int8_t play_combine[] = {0x7E, 0x08, 0x45, 0x02, 10, 0x02, 11, 0x02, 12, (int8_t)0xEF};
+    this->SendCommandToMP3Player(play_combine, 18);
+}
 #endif //AUDIO_H

@@ -25,14 +25,14 @@ void ConnectToWifi();
 //#define WIFI_SSID "Migdalor_WIFI"
 //#define WIFI_PASSWORD "1122889900"
 
-//#define WIFI_SSID "Karam"
-//#define WIFI_PASSWORD "karam1234"
+#define WIFI_SSID "Karam"
+#define WIFI_PASSWORD "karam1234"
 
-#define WIFI_SSID "AndroidAP"
-#define WIFI_PASSWORD "sami0303"
+// #define WIFI_SSID "AndroidAP"
+// #define WIFI_PASSWORD "sami0303"
 
-//#define WIFI_SSID "Kamil"
-//#define WIFI_PASSWORD "kamil196"
+// #define WIFI_SSID "Kamil"
+// #define WIFI_PASSWORD "kamil196"
 
 /******************************************************************/
 float GetNum(String string) {

@@ -32,7 +32,6 @@ char reading_char;
 
 void setup() {
     
-    //PlayReadingTag(1)
     ///////////// RFID setup //////////////////////////
     Serial.begin(9600);
     RFID.begin(9600);
@@ -51,10 +50,10 @@ void setup() {
     Serial1.begin(9600);
     audio.SendCommandToMP3Player(select_SD_card, 5);
 
+    audio.PlayConnectingToWiFi("Hebrew");
     ///////////////////// wifi setup //////////////////////////
     ConnectToWifi();
         
-    //PlayConnectingToWorkerData(2);
     /* Assign the api key (required) */
     firestore.config.api_key = API_KEY;
 
@@ -74,7 +73,7 @@ void setup() {
     
     pinMode(23, INPUT_PULLUP);
     first_time_played = true;
-    worker.language = "Arabic";
+    worker.language = "Hebrew";
 }
 /******************************************************************/
 void loop() 
@@ -91,11 +90,14 @@ void loop()
     }
 
     ///////////////////// RFID read //////////////////////////
+    if (!RFID.available() && !start){
+        audio.PlayPutYourChip("Hebrew");
+    }   
     while (!RFID.available() && !start){
-        Serial.write("RFID is not available\n");
+        Serial.write("\nRFID is not available\n");
         delay(5);
     }
-    while (RFID.available() > 0 && !start){ //PlayConnectingToWorkerData(2.5);
+    while (RFID.available() > 0 && !start){
         Serial.write("reading RFID ... \n");
         delay(5);
         reading_char = RFID.read();
@@ -115,7 +117,7 @@ void loop()
         first_time_played = false;
         digitalWrite(redPin, HIGH);
 
-        //PlayConnectingToWorkerData(3);
+        audio.PlayConnectingToWorkerData(worker.language);;
         ////////////////////////read from firestore/////////////////////////////////
         bool can_access_fire_store = firestore.CheckAccessFireStore(FIREBASE_PROJECT_ID,documentPath.c_str());
         if (!can_access_fire_store){
@@ -140,14 +142,12 @@ void loop()
             audio.PlayCantCollectDataFromDB(first_time_played,start);
             return;
         }
-        Serial.write("all good, starting the project ... \n");
         //audio.PlayCombine();
         audio.SayIntro(worker.language);
         GetTime(start_time);
     }
 
     ///////////////////// scale read //////////////////////////
-    //PlayReadingScaleWeight(4)
     scale.ReadScaleWeight();
     scale.Run(audio,worker,firestore);
 
