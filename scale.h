@@ -21,6 +21,7 @@ class Scale{
         void Run(Audio& audio, Worker& worker, FireStore& firestore);
         bool CheckIfTaskEnded(float& curr_val);
         bool CheckingIfShouldStartNewTask(float& curr_val);
+        bool CheckingStableWeight(float& curr_val);
         void PlayTaskEnded(Audio& audio, FireStore& firestore, Worker& worker,float& curr_val);
 };
 
@@ -31,6 +32,7 @@ void Scale::ReadScaleWeight()
 
     this->oldWeightString = currWeightString;
     this->currWeightString = "";
+    delay(200);
     while (Serial2.available())
     {
         char_to_read = Serial2.read();
@@ -58,14 +60,15 @@ void Scale::Run(Audio& audio, Worker& worker, FireStore& firestore)
     Serial.println("\ncurrent weight: ");
     Serial.println(curr_val);
 
-    bool is_task_ended = CheckIfTaskEnded(curr_val);
-    if (is_task_ended){
-        this->PlayTaskEnded(audio,firestore,worker,curr_val);
-    }
-    else{
-        audio.SayNum(int((curr_val + unit / 2) / unit), worker.language, false);
-        this->oldVal = -10;
-        delay(1000);
+    if(CheckingStableWeight(curr_val)){
+        if (CheckIfTaskEnded(curr_val)){
+            this->PlayTaskEnded(audio,firestore,worker,curr_val);
+        }
+        else{
+            audio.SayNum(int((curr_val + unit / 2) / unit), worker.language, false);
+            this->oldVal = -10;
+            delay(1000);
+        }
     }
     this->currWeightString = "";
 }
@@ -77,6 +80,10 @@ bool Scale::CheckIfTaskEnded(float& curr_val)
 
 bool Scale::CheckingIfShouldStartNewTask(float& curr_val){
     return (this->oldVal < curr_val + 0.01 && this->oldVal > curr_val - 0.01 && this->oldVal < goal * 0.7 && !(this->isNextJobReady));
+}
+
+bool Scale::CheckingStableWeight(float& curr_val){
+    return ((this->oldVal < curr_val + 0.01 ) && (this->isNextJobReady));
 }
 
 void Scale::PlayTaskEnded(Audio& audio,FireStore& firestore, Worker& worker,float& curr_val){

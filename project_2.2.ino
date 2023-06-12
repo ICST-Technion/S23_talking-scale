@@ -164,5 +164,3 @@ void LogOut(){
 
     audio.PlayGoodBye(worker);
 }
-
-

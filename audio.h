@@ -29,7 +29,7 @@ class Audio{
         void PlayConnectingToWorkerData(String language);
         
         //void WaitUntilAudioEnded();
-        void PlayCombine();
+        //void PlayCombine();
 
 };
 
@@ -108,51 +108,62 @@ void Audio::SayArabic(int num)
 /*****************************************************************/
 void Audio::SayHebrew(int num)
 {
-    if (num / 100 > 0){
-      play_indx_song[4] = (num) - (num%100);
-      SendCommandToMP3Player(play_indx_song, 6);
-      if(play_indx_song[4] == 100 || play_indx_song[4] == 200){
-        delay(700);
-      }
-      else{
-        delay(1200);
-      }
-      num = num % 100;
-    }
-    play_indx_song[4] = num;
-    SendCommandToMP3Player(play_indx_song, 6);
-    delay(500); 
-    return;
 
-    if (num < 10 && num > 0) {
-      play_indx_song[4] = num + 20;
-      SendCommandToMP3Player(play_indx_song, 6);
-      delay(250);
-      return;
-    }
-    if (num / 100 > 0) {
-      play_indx_song[4] = 100 + num / 100;
-      SendCommandToMP3Player(play_indx_song, 6);
-      delay(250);
-    }
-    num = num % 100;
-    if (num / 10 > 1) {
-      play_indx_song[4] = 10 * (num / 10);
-      SendCommandToMP3Player(play_indx_song, 6);
-      delay(250);
-    }
-    if (num / 10 == 1) {
+    if (num > 0 && num < 1000){
+      Serial.print("num in sayHebrew is : ");
+      Serial.println(num);
+      Serial.println();
+      play_indx_song[3] = 11;
       play_indx_song[4] = num;
       SendCommandToMP3Player(play_indx_song, 6);
-      delay(500);
-      return;
+    //  delay(1500); 
     }
-    num = num % 10;
-    if (num > 0) {
-      play_indx_song[4] = num;
-      SendCommandToMP3Player(play_indx_song, 6);
-      delay(250);
-    }
+
+    // if (num / 100 > 0){
+    //   play_indx_song[4] = (num) - (num%100);
+    //   SendCommandToMP3Player(play_indx_song, 6);
+    //   if(play_indx_song[4] == 100 || play_indx_song[4] == 200){
+    //     delay(700);
+    //   }
+    //   else{
+    //     delay(1200);
+    //   }
+    //   num = num % 100;
+    // }
+    // play_indx_song[4] = num;
+    // SendCommandToMP3Player(play_indx_song, 6);
+    // delay(500); 
+    // return;
+
+    // if (num < 10 && num > 0) {
+    //   play_indx_song[4] = num + 20;
+    //   SendCommandToMP3Player(play_indx_song, 6);
+    //   delay(250);
+    //   return;
+    // }
+    // if (num / 100 > 0) {
+    //   play_indx_song[4] = 100 + num / 100;
+    //   SendCommandToMP3Player(play_indx_song, 6);
+    //   delay(250);
+    // }
+    // num = num % 100;
+    // if (num / 10 > 1) {
+    //   play_indx_song[4] = 10 * (num / 10);
+    //   SendCommandToMP3Player(play_indx_song, 6);
+    //   delay(250);
+    // }
+    // if (num / 10 == 1) {
+    //   play_indx_song[4] = num;
+    //   SendCommandToMP3Player(play_indx_song, 6);
+    //   delay(500);
+    //   return;
+    // }
+    // num = num % 10;
+    // if (num > 0) {
+    //   play_indx_song[4] = num;
+    //   SendCommandToMP3Player(play_indx_song, 6);
+    //   delay(250);
+    // }
 }
 
 /*****************************************************************/
@@ -194,23 +205,26 @@ void Audio::SayIntro(String language)
     play_indx_song[3] = 30;
     play_indx_song[4] = 19;
     SendCommandToMP3Player(play_indx_song, 6);
-    delay(4000);
+    delay(3300);
 
-    SayNum(int(goal), language, true);
-    delay(1000);
-    
-    play_indx_song[3] = 30;
-    play_indx_song[4] = 14;
-    SendCommandToMP3Player(play_indx_song, 6);
-    delay(950);
+    // play_indx_song[3] = 11;
+    // SayNum(goal, language, true);
+    // delay(1000);
+    // play_indx_song[3] = 30;
+    // play_indx_song[4] = 14;
+    // SendCommandToMP3Player(play_indx_song, 6);
+    // delay(950);
 
+    Serial.print("units is : ");
+    Serial.println(int(goal/unit));
+    Serial.println();
     SayNum(int(goal / unit), language, true);
-    delay(900);
+    delay(500);
 
     play_indx_song[3] = 30;
     play_indx_song[4] = 15;
     SendCommandToMP3Player(play_indx_song, 6);
-    delay(950);
+    delay(70);
 }
 
 /******************************************************************/
@@ -222,7 +236,7 @@ void Audio::SendCommandToMP3Player(int8_t command[], int len)
         Serial1.write(command[i]);
         Serial.print(command[i], HEX);
     }
-    //delay(1000);
+    delay(1000);
 }
 
 /******************************************************************/
@@ -234,7 +248,7 @@ void Audio::SayNum(int num, String language, bool justNum) {
   }
   if (language == "Hebrew")
   {
-      play_indx_song[3] = 40;
+      play_indx_song[3] = 11;
       SayHebrew(num);
   }
   if (language == "Russian")
@@ -401,10 +415,10 @@ void Audio::PlayConnectingToWorkerData(String language)
 //         delay(100);
 //     }
 // }
-void Audio::PlayCombine(){
+// void Audio::PlayCombine(){
     
-    int8_t play_combine[] = {0x7E, 16, 0x45, 30, 11, 30, 12, 30, 13, 02, 30, 30, 14, 02, 30, 30, 15, (int8_t)0xEF};
-    //int8_t play_combine[] = {0x7E, 0x08, 0x45, 0x02, 10, 0x02, 11, 0x02, 12, (int8_t)0xEF};
-    this->SendCommandToMP3Player(play_combine, 18);
-}
+//     int8_t play_combine[] = {0x7E, 16, 0x45, 30, 11, 30, 12, 30, 13, 02, 30, 30, 14, 02, 30, 30, 15, (int8_t)0xEF};
+//     //int8_t play_combine[] = {0x7E, 0x08, 0x45, 0x02, 10, 0x02, 11, 0x02, 12, (int8_t)0xEF};
+//     this->SendCommandToMP3Player(play_combine, 18);
+// }
 #endif //AUDIO_H
