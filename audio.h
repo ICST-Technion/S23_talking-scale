@@ -45,6 +45,7 @@ Audio::Audio(){
 /******************************************************************/
 void Audio::SayArabic(int num)
 {
+    play_indx_song[3] = 1;
     bool first = true;
     if (num / 100 > 0)
     {
@@ -108,67 +109,49 @@ void Audio::SayArabic(int num)
 /*****************************************************************/
 void Audio::SayHebrew(int num)
 {
+  if (num > 0 && num < 1000){
+    play_indx_song[3] = 11;
+    play_indx_song[4] = num;
+    SendCommandToMP3Player(play_indx_song, 6);
+    return;
+  }
 
-    if (num > 0 && num < 1000){
-      Serial.print("num in sayHebrew is : ");
-      Serial.println(num);
-      Serial.println();
-      play_indx_song[3] = 11;
-      play_indx_song[4] = num;
-      SendCommandToMP3Player(play_indx_song, 6);
-    //  delay(1500); 
-    }
-
-    // if (num / 100 > 0){
-    //   play_indx_song[4] = (num) - (num%100);
-    //   SendCommandToMP3Player(play_indx_song, 6);
-    //   if(play_indx_song[4] == 100 || play_indx_song[4] == 200){
-    //     delay(700);
-    //   }
-    //   else{
-    //     delay(1200);
-    //   }
-    //   num = num % 100;
-    // }
-    // play_indx_song[4] = num;
-    // SendCommandToMP3Player(play_indx_song, 6);
-    // delay(500); 
-    // return;
-
-    // if (num < 10 && num > 0) {
-    //   play_indx_song[4] = num + 20;
-    //   SendCommandToMP3Player(play_indx_song, 6);
-    //   delay(250);
-    //   return;
-    // }
-    // if (num / 100 > 0) {
-    //   play_indx_song[4] = 100 + num / 100;
-    //   SendCommandToMP3Player(play_indx_song, 6);
-    //   delay(250);
-    // }
-    // num = num % 100;
-    // if (num / 10 > 1) {
-    //   play_indx_song[4] = 10 * (num / 10);
-    //   SendCommandToMP3Player(play_indx_song, 6);
-    //   delay(250);
-    // }
-    // if (num / 10 == 1) {
-    //   play_indx_song[4] = num;
-    //   SendCommandToMP3Player(play_indx_song, 6);
-    //   delay(500);
-    //   return;
-    // }
-    // num = num % 10;
-    // if (num > 0) {
-    //   play_indx_song[4] = num;
-    //   SendCommandToMP3Player(play_indx_song, 6);
-    //   delay(250);
-    // }
+  play_indx_song[3]=2;
+  if(num < 10 && num > 0){
+    play_indx_song[4]=num+20;
+    SendCommandToMP3Player(play_indx_song, 6);
+    delay(250);
+    return;
+  }
+  if(num / 100 > 0 ){
+    play_indx_song[4]=100+num / 100;
+    SendCommandToMP3Player(play_indx_song, 6);
+    delay(250);
+  }  
+  num = num % 100;
+  if(num / 10 > 1 ){
+    play_indx_song[4]=10 * (num / 10);
+    SendCommandToMP3Player(play_indx_song, 6);
+    delay(250);
+  }
+  if(num / 10 == 1 ){
+    play_indx_song[4]= num;
+    SendCommandToMP3Player(play_indx_song, 6);
+    delay(500);
+    return;
+  }
+  num = num % 10;
+  if(num  > 0 ){
+    play_indx_song[4]=num;
+    SendCommandToMP3Player(play_indx_song, 6);
+    delay(250);
+  }
 }
 
 /*****************************************************************/
 void Audio::SayRussian(int num)
 {
+    play_indx_song[3] = 3;
     if (num / 100 > 0)
     {
         play_indx_song[4] = 100 + num / 100;
@@ -203,27 +186,16 @@ void Audio::SayRussian(int num)
 void Audio::SayIntro(String language)
 {
     play_indx_song[3] = 30;
-    play_indx_song[4] = 19;
+    play_indx_song[4] = 19; //intro audio
     SendCommandToMP3Player(play_indx_song, 6);
     delay(3300);
 
-    // play_indx_song[3] = 11;
-    // SayNum(goal, language, true);
-    // delay(1000);
-    // play_indx_song[3] = 30;
-    // play_indx_song[4] = 14;
-    // SendCommandToMP3Player(play_indx_song, 6);
-    // delay(950);
-
-    Serial.print("units is : ");
-    Serial.println(int(goal/unit));
-    Serial.println();
-    SayNum(int(goal / unit), language, true);
+    SayNum(int(goal / unit), language, true); //num of units audio
     delay(500);
 
     play_indx_song[3] = 30;
     play_indx_song[4] = 15;
-    SendCommandToMP3Player(play_indx_song, 6);
+    SendCommandToMP3Player(play_indx_song, 6); // "units"
     delay(70);
 }
 
@@ -243,17 +215,14 @@ void Audio::SendCommandToMP3Player(int8_t command[], int len)
 void Audio::SayNum(int num, String language, bool justNum) {
   if (language == "Arabic")
   {
-      play_indx_song[3] = 1;
       SayArabic(num);
   }
   if (language == "Hebrew")
   {
-      play_indx_song[3] = 11;
       SayHebrew(num);
   }
   if (language == "Russian")
   {
-      play_indx_song[3] = 3;
       SayRussian(num);
   }
 }

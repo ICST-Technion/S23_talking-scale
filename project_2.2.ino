@@ -18,7 +18,7 @@ SoftwareSerial RFID(21, 19);  // RX and TX
 
 Audio audio;
 FireStore firestore;
-Worker worker("","","","");
+Worker worker("","","","Hebrew");
 Scale scale;
 
 bool first_time_played;
@@ -50,8 +50,8 @@ void setup() {
     Serial1.begin(9600);
     audio.SendCommandToMP3Player(select_SD_card, 5);
 
-    audio.PlayConnectingToWiFi("Hebrew");
     ///////////////////// wifi setup //////////////////////////
+    audio.PlayConnectingToWiFi(worker.language);
     ConnectToWifi();
         
     /* Assign the api key (required) */
@@ -73,7 +73,6 @@ void setup() {
     
     pinMode(23, INPUT_PULLUP);
     first_time_played = true;
-    worker.language = "Hebrew";
 }
 /******************************************************************/
 void loop() 
@@ -91,7 +90,7 @@ void loop()
 
     ///////////////////// RFID read //////////////////////////
     if (!RFID.available() && !start){
-        audio.PlayPutYourChip("Hebrew");
+        audio.PlayPutYourChip(worker.language);
     }   
     while (!RFID.available() && !start){
         Serial.write("\nRFID is not available\n");
@@ -142,7 +141,6 @@ void loop()
             audio.PlayCantCollectDataFromDB(first_time_played,start);
             return;
         }
-        //audio.PlayCombine();
         audio.SayIntro(worker.language);
         GetTime(start_time);
     }
