@@ -8,8 +8,8 @@ The project consists of 2 main pieces:
 Hardware & code: Scale - Platform
 
 Application: AidScale-Mobile-Application
-(![Alt text](image link))
 
+![Alt text](image link)
 
 The project was made for the 236333 Internet Of Things course at the Technion-institute of Technology
 
