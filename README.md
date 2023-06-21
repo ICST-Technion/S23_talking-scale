@@ -8,8 +8,8 @@ The project consists of 2 main pieces:
 Hardware & code: Scale - Platform
 
 Application: AidScale-Mobile-Application
+![שקופית1](https://github.com/musallamsami/talking-scale/assets/63317387/507354ae-940f-4fe8-a23a-c3f65c951358)
 
-![Alt text](image link)
 
 The project was made for the 236333 Internet Of Things course at the Technion-institute of Technology
 
