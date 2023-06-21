@@ -1,4 +1,5 @@
 **AidScale-Project**
+
 Main repository of the Aid-Scale IOT project
 
 The project will be used in a factory where the visually impaired and the blind are employed to help them make packages by quantities. With added feature to monitor employees and concern for their well-being
